@@ -1,9 +1,9 @@
 from turtle import Turtle
+import random
 
 PADDLE_WIDTH = 5
 PADDLE_HEIGHT = 1
 PADDLE_SPEED = 50
-
 SB_FONT = ('Courier', 24, 'bold')
 
 
@@ -45,7 +45,7 @@ class Ball(Turtle):
         self.shape('circle')
         self.color('white')
         self.penup()
-        self.goto(0, 0)
+        self.goto(0, -200)
         self.ball_x_travel = self.ball_speed
         self.ball_y_travel = self.ball_speed
 
@@ -58,12 +58,22 @@ class Ball(Turtle):
     def side_bounce(self):
         self.ball_x_travel *= -1
 
-    def top_bottom_bounce(self):
+    def top_paddle_bounce(self):
         self.ball_y_travel *= -1
+
+    def block_bounce(self):
+        # This will be a random bounce left or right from block
+        choice = random.randint(0, 1)
+        if choice == 0:
+            self.ball_y_travel *= -1
+        else:
+            self.ball_y_travel *= -1
+            # And misdirect X travel
+            self.ball_x_travel *= -1
 
     def reset_ball(self):
         self.goto(0, -200)
-        self.top_bottom_bounce()
+        self.top_paddle_bounce()
 
 
 ########## Block ##########
@@ -123,8 +133,9 @@ class Scoreboard(Turtle):
         self.write('YOU WIN', align='center', font=SB_FONT)
 
     def paused(self):
-        self.goto(0, -100)
+        self.goto(0, -150)
         self.write('                PAUSED\n\n' +
                    'LEFT ARROW / RIGHT ARROW TO MOVE PADDLE\n' +
-                   '      SPACEBAR TO PAUSE / UNPAUSE',
+                   '      SPACEBAR TO PAUSE / UNPAUSE\n\n' +
+                   '         PRESS ESCAPE TO QUIT',
                    align='center', font=SB_FONT)

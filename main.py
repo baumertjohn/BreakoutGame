@@ -22,6 +22,10 @@ def pause_game():
         scoreboard.paused()
 
 
+def kill_game():
+    screen.bye()
+
+
 # Game screen setup
 screen = Screen()
 screen.setup(width=800, height=700)
@@ -38,14 +42,14 @@ screen.listen()
 screen.onkeypress(paddle.paddle_left, 'Left')
 screen.onkeypress(paddle.paddle_right, 'Right')
 screen.onkeypress(pause_game, 'space')
+screen.onkeypress(kill_game, 'Escape')
 
 game_active = True
-
 # Call instructions at start of game
 scoreboard.paused()
 
 while game_active:
-    # Pause code
+    # Run game if not paused
     if not PAUSED:
         # Move ball
         ball.move_ball()
@@ -56,11 +60,11 @@ while game_active:
 
         # Detect top collision
         if ball.ycor() > 290:
-            ball.top_bottom_bounce()
+            ball.top_paddle_bounce()
 
         # Detect paddle collision
         if ball.distance(paddle) < 50 and ball.ycor() < -250:
-            ball.top_bottom_bounce()
+            ball.top_paddle_bounce()
 
         # Detect paddle miss
         if ball.ycor() < -300:
@@ -72,10 +76,12 @@ while game_active:
         if ball.ycor() > 0:
             for count, block in enumerate(blockmanager.blocklist):
                 if block.distance(ball) < 40:
-                    block.ht()  # "Hides" the turtle
+                    block.ht()  # "Hides" the block
                     del blockmanager.blocklist[count]  # Deletes block object
-                    ball.top_bottom_bounce()
+                    ball.block_bounce()
                     scoreboard.increase_score()
+                    # This added sleep time keeps game speed consistant as
+                    # block list gets shorter and quicker to parse through
                     sleep_time += 0.0001
 
         # Detect WIN
