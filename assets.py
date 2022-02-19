@@ -1,6 +1,6 @@
 from turtle import Turtle
 
-PADDLE_WIDTH = 7
+PADDLE_WIDTH = 5
 PADDLE_HEIGHT = 1
 PADDLE_SPEED = 50
 
@@ -12,6 +12,7 @@ class Paddle(Turtle):
     def __init__(self):
         super().__init__()
         self.create_paddle()
+        self.paused = 0
 
     def create_paddle(self):
         self.shape('square')
@@ -90,15 +91,6 @@ class BlockManager():
                 x_pos += 71
             y_pos -= 35
 
-    def extra_block(self):
-        # Hack to keep the game speed consistent
-        block = Turtle(shape='square')
-        block.shapesize(1, 3, 1)
-        block.penup()
-        block.color('black')
-        block.goto(1000, 1000)
-        self.blocklist.append(block)
-
 
 ########## Scoreboard ##########
 class Scoreboard(Turtle):
@@ -108,12 +100,15 @@ class Scoreboard(Turtle):
         self.penup()
         self.hideturtle()
         self.score = 0
+        self.lives = 5
         self.update_scoreboard()
 
     def update_scoreboard(self):
         self.clear()
-        self.goto(0, 300)
+        self.goto(-300, 300)
         self.write(f'SCORE: {self.score}', align='center', font=SB_FONT)
+        self.goto(300, 300)
+        self.write(f'LIVES: {self.lives}', align='center', font=SB_FONT)
 
     def increase_score(self):
         self.score += 10
@@ -122,3 +117,14 @@ class Scoreboard(Turtle):
     def game_over(self):
         self.goto(0, 0)
         self.write('GAME OVER', align='center', font=SB_FONT)
+
+    def you_win(self):
+        self.goto(0, 0)
+        self.write('YOU WIN', align='center', font=SB_FONT)
+
+    def paused(self):
+        self.goto(0, -100)
+        self.write('                PAUSED\n\n' +
+                   'LEFT ARROW / RIGHT ARROW TO MOVE PADDLE\n' +
+                   '      SPACEBAR TO PAUSE / UNPAUSE',
+                   align='center', font=SB_FONT)
